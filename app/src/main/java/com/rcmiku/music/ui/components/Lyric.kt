@@ -192,7 +192,7 @@ fun Lyric(
                                 text = lrcLines[index].text,
                                 color = if (isCurrent) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary,
                                 fontWeight = FontWeight.SemiBold,
-                                fontSize = 32.sp,
+                                fontSize = 24.sp,
                                 lineHeight = 1.2.em,
                                 modifier = Modifier
                                     .fillMaxWidth()
