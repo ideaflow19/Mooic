@@ -45,12 +45,16 @@ import com.rcmiku.music.R
 import com.rcmiku.music.constants.SettingItemCorner
 import com.rcmiku.music.constants.SettingItemHeight
 import com.rcmiku.music.constants.SettingItemSubCorner
+import com.rcmiku.music.constants.apiBaseUrlKey
 import com.rcmiku.music.constants.audioQualityKey
 import com.rcmiku.music.constants.autoSkipNextOnErrorKey
 import com.rcmiku.music.constants.ncmCookieKey
+import com.rcmiku.music.constants.unblockBaseUrlKey
 import com.rcmiku.music.constants.use40DpIconKey
 import com.rcmiku.music.ui.components.Dialog
 import com.rcmiku.music.ui.components.SongQualityDialog
+import com.rcmiku.music.ui.components.UrlEditDialog
+import com.rcmiku.music.ui.icons.Dns
 import com.rcmiku.music.ui.icons.Github
 import com.rcmiku.music.ui.icons.GraphicEq
 import com.rcmiku.music.ui.icons.Login
@@ -73,10 +77,14 @@ fun SettingsScreen(navController: NavHostController) {
 
     var use40DpIcon by rememberPreference(use40DpIconKey, false)
     var audioQuality by rememberEnumPreference(audioQualityKey, defaultValue = SongLevel.STANDARD)
-    var showDialog by remember { mutableStateOf(false) }
+    var showQualityDialog by remember { mutableStateOf(false) }
+    var showApiUrlDialog by remember { mutableStateOf(false) }
+    var showUnblockUrlDialog by remember { mutableStateOf(false) }
     var autoSkipNextOnError by rememberPreference(autoSkipNextOnErrorKey, false)
     var logout by rememberSaveable { mutableStateOf(false) }
     var ncmCookie by rememberPreference(ncmCookieKey, "")
+    var apiBaseUrl by rememberPreference(apiBaseUrlKey, "http://152.136.23.59:4000")
+    var unblockBaseUrl by rememberPreference(unblockBaseUrlKey, "http://152.136.23.59:3000")
 
     val baseSettingItems = listOf(
         SettingItemData(
@@ -122,7 +130,7 @@ fun SettingsScreen(navController: NavHostController) {
 
             },
             onClick = {
-                showDialog = true
+                showQualityDialog = true
             }
         ),
         SettingItemData(
@@ -140,6 +148,18 @@ fun SettingsScreen(navController: NavHostController) {
             onClick = {
                 autoSkipNextOnError = !autoSkipNextOnError
             }
+        ),
+        SettingItemData(
+            title = stringResource(R.string.api_server),
+            subtitle = apiBaseUrl,
+            imageVector = Dns,
+            onClick = { showApiUrlDialog = true }
+        ),
+        SettingItemData(
+            title = stringResource(R.string.unblock_server),
+            subtitle = unblockBaseUrl,
+            imageVector = Dns,
+            onClick = { showUnblockUrlDialog = true }
         )
     )
 
@@ -237,10 +257,10 @@ fun SettingsScreen(navController: NavHostController) {
         }
     }
 
-    if (showDialog) {
+    if (showQualityDialog) {
         SongQualityDialog(
             currentLevel = audioQuality,
-            onDismiss = { showDialog = false },
+            onDismiss = { showQualityDialog = false },
             onQualitySelected = { audioQuality = it }
         )
     }
@@ -255,6 +275,26 @@ fun SettingsScreen(navController: NavHostController) {
                 logout = false
             },
             dialogTitle = stringResource(R.string.logout),
+        )
+    }
+
+    if (showApiUrlDialog) {
+        UrlEditDialog(
+            title = stringResource(R.string.api_server),
+            currentUrl = apiBaseUrl,
+            defaultUrl = "http://152.136.23.59:4000",
+            onDismiss = { showApiUrlDialog = false },
+            onConfirm = { apiBaseUrl = it }
+        )
+    }
+
+    if (showUnblockUrlDialog) {
+        UrlEditDialog(
+            title = stringResource(R.string.unblock_server),
+            currentUrl = unblockBaseUrl,
+            defaultUrl = "http://152.136.23.59:3000",
+            onDismiss = { showUnblockUrlDialog = false },
+            onConfirm = { unblockBaseUrl = it }
         )
     }
 }

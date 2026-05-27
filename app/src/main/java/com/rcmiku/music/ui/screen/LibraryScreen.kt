@@ -1,5 +1,6 @@
 package com.rcmiku.music.ui.screen
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -29,6 +30,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -41,8 +43,10 @@ import com.rcmiku.music.R
 import com.rcmiku.music.constants.ncmCookieKey
 import com.rcmiku.music.ui.components.TopBar
 import com.rcmiku.music.ui.icons.Favorite
+import com.rcmiku.music.ui.icons.Login
 import com.rcmiku.music.ui.icons.VipFill
 import com.rcmiku.music.ui.navigation.PlaylistNav
+import com.rcmiku.music.ui.navigation.Screen
 import com.rcmiku.music.utils.CoverImageSize
 import com.rcmiku.music.utils.rememberPreference
 import com.rcmiku.music.utils.toCoverImageUrl
@@ -80,7 +84,43 @@ fun LibraryScreen(
             TopBar(navController = navController, titleRes = R.string.mine)
         }
     ) { padding ->
-        LazyColumn(
+        if (ncmCookie.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding),
+                contentAlignment = Alignment.Center
+            ) {
+                Card(
+                    modifier = Modifier
+                        .padding(24.dp)
+                        .clickable { navController.navigate(Screen.Login.route) },
+                    shape = MaterialTheme.shapes.extraLarge,
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+                    )
+                ) {
+                    Column(
+                        modifier = Modifier.padding(32.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Image(
+                            imageVector = Login,
+                            contentDescription = null,
+                            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
+                            modifier = Modifier.size(48.dp)
+                        )
+                        Text(
+                            text = stringResource(R.string.click_to_login),
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                }
+            }
+        } else {
+            LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.surface)
@@ -152,6 +192,7 @@ fun LibraryScreen(
             item {
                 Spacer(modifier = Modifier.navigationBarsPadding())
             }
+        }
         }
     }
 }
