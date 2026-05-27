@@ -63,8 +63,10 @@ import com.rcmiku.music.ui.components.SongListItem
 import com.rcmiku.music.ui.components.SongMenuBottomSheet
 import com.rcmiku.music.ui.icons.LibraryAdd
 import com.rcmiku.music.ui.icons.LibraryAddCheck
+import com.rcmiku.music.utils.CoverImageSize
 import com.rcmiku.music.ui.navigation.ArtistNav
 import com.rcmiku.music.utils.formatTimestamp
+import com.rcmiku.music.utils.toCoverImageUrl
 import com.rcmiku.music.viewModel.AlbumScreenViewModel
 import com.rcmiku.ncmapi.model.Song
 import kotlinx.coroutines.flow.map
@@ -127,7 +129,7 @@ fun AlbumScreen(
                     ) {
                         with(sharedTransitionScope) {
                             AsyncImage(
-                                model = it.album.picUrl,
+                                model = it.album.picUrl.toCoverImageUrl(CoverImageSize.DETAIL),
                                 contentDescription = it.album.name,
                                 contentScale = ContentScale.Crop,
                                 filterQuality = FilterQuality.High,

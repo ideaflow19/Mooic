@@ -7,6 +7,8 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import com.rcmiku.ncmapi.api.player.PlayerApi
 import com.rcmiku.ncmapi.api.player.SongLevel
+import com.rcmiku.music.utils.CoverImageSize
+import com.rcmiku.music.utils.toCoverImageUrl
 import com.rcmiku.ncmapi.model.CloudSong
 import com.rcmiku.ncmapi.model.Radio
 import com.rcmiku.ncmapi.model.Song
@@ -22,14 +24,14 @@ fun Song.toMediaItem() =
     MediaItem.Builder()
         .setUri(this.encodeUri())
         .setMediaId(this.id.toString())
-        .setMediaMetadata(
-            MediaMetadata.Builder()
-                .setArtist(this.ar.joinToString("/") { it.name })
-                .setTitle(this.name)
-                .setArtworkUri(this.al.picUrl.toUri())
-                .setExtras(Bundle().apply {
-                    putString(
-                        "song",
+            .setMediaMetadata(
+                MediaMetadata.Builder()
+                    .setArtist(this.ar.joinToString("/") { it.name })
+                    .setTitle(this.name)
+                    .setArtworkUri(this.al.picUrl.toCoverImageUrl(CoverImageSize.HERO)?.toUri())
+                    .setExtras(Bundle().apply {
+                        putString(
+                            "song",
                         json.encodeToString(this@toMediaItem)
                     )
                 })
@@ -48,7 +50,7 @@ fun List<Song>.toMediaItemList() =
                 MediaMetadata.Builder()
                     .setArtist(song.ar.joinToString("/") { artist -> artist.name })
                     .setTitle(song.name)
-                    .setArtworkUri(song.al.picUrl.toUri())
+                    .setArtworkUri(song.al.picUrl.toCoverImageUrl(CoverImageSize.HERO)?.toUri())
                     .setExtras(extras)
                     .build()
             )
@@ -65,7 +67,9 @@ fun List<CloudSong>.toCloudSongMediaItemList(uid: Long) =
                 MediaMetadata.Builder()
                     .setArtist(cloudSong.artist)
                     .setTitle(cloudSong.simpleSong.name)
-                    .setArtworkUri(cloudSong.simpleSong.al?.picUrl?.toUri())
+                    .setArtworkUri(
+                        cloudSong.simpleSong.al?.picUrl.toCoverImageUrl(CoverImageSize.HERO)?.toUri()
+                    )
                     .build()
             )
             .build()
@@ -80,7 +84,7 @@ fun List<Radio>.toRadioMediaItemList() =
                 MediaMetadata.Builder()
                     .setArtist(radio.mainSong.artists.joinToString { it.name })
                     .setTitle(radio.mainSong.name)
-                    .setArtworkUri(radio.coverUrl.toUri())
+                    .setArtworkUri(radio.coverUrl.toCoverImageUrl(CoverImageSize.HERO)?.toUri())
                     .build()
             )
             .build()

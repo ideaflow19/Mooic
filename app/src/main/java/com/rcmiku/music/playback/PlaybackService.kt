@@ -12,6 +12,7 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player.REPEAT_MODE_ALL
 import androidx.media3.common.TrackSelectionParameters
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.cache.CacheDataSource
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.datasource.ResolvingDataSource
 import androidx.media3.exoplayer.ExoPlayer
@@ -129,7 +130,7 @@ class PlaybackService : MediaSessionService() {
 
         val player = ExoPlayer.Builder(this, audioOnlyRenderersFactory)
             .apply {
-                val dataSourceFactory: ResolvingDataSource.Factory = ResolvingDataSource.Factory(
+                val resolvingDataSourceFactory: ResolvingDataSource.Factory = ResolvingDataSource.Factory(
                     DefaultHttpDataSource.Factory()
                 ) { dataSpec ->
                     runBlocking {
@@ -147,7 +148,14 @@ class PlaybackService : MediaSessionService() {
                         )
                     }
                 }
-                setMediaSourceFactory(DefaultMediaSourceFactory(dataSourceFactory))
+                val cacheDataSourceFactory = CacheDataSource.Factory()
+                    .setCache(AudioCache.get(this@PlaybackService))
+                    .setUpstreamDataSourceFactory(resolvingDataSourceFactory)
+                    .setCacheKeyFactory { dataSpec ->
+                        "${dataSpec.key ?: dataSpec.uri}#${audioQuality.value}"
+                    }
+                    .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
+                setMediaSourceFactory(DefaultMediaSourceFactory(cacheDataSourceFactory))
             }.build()
 
         val audioOffloadPreferences =

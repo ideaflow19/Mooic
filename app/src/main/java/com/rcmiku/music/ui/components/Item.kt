@@ -52,8 +52,10 @@ import com.rcmiku.music.constants.ThumbnailCornerRadius
 import com.rcmiku.music.ui.icons.FavoriteFill
 import com.rcmiku.music.ui.icons.Payment
 import com.rcmiku.music.ui.icons.Vip
+import com.rcmiku.music.utils.CoverImageSize
 import com.rcmiku.music.utils.formatPlayCount
 import com.rcmiku.music.utils.formatTimestamp
+import com.rcmiku.music.utils.toCoverImageUrl
 import com.rcmiku.ncmapi.model.Album
 import com.rcmiku.ncmapi.model.CloudSong
 import com.rcmiku.ncmapi.model.Playlist
@@ -230,7 +232,7 @@ fun ArtistListItem(
     title = artist.name,
     thumbnailContent = {
         AsyncImage(
-            model = artist.picUrl,
+            model = artist.picUrl.toCoverImageUrl(CoverImageSize.LIST),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -255,7 +257,7 @@ fun AlbumListItem(
     ) + " " + album.artists.joinToString("/") { it.name },
     thumbnailContent = {
         AsyncImage(
-            model = album.picUrl,
+            model = album.picUrl.toCoverImageUrl(CoverImageSize.LIST),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -294,7 +296,7 @@ fun VoiceListItem(
     subtitle = stringResource(R.string.voice_count, voice.programCount),
     thumbnailContent = {
         AsyncImage(
-            model = voice.picUrl,
+            model = voice.picUrl.toCoverImageUrl(CoverImageSize.LIST),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -321,7 +323,7 @@ fun PlaylistListItem(
     },
     thumbnailContent = {
         AsyncImage(
-            model = playlist.picUrl,
+            model = playlist.picUrl.toCoverImageUrl(CoverImageSize.LIST),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -347,7 +349,7 @@ fun PlaylistV1ListItem(
     ),
     thumbnailContent = {
         AsyncImage(
-            model = playlist.coverImgUrl,
+            model = playlist.coverImgUrl.toCoverImageUrl(CoverImageSize.LIST),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -446,7 +448,7 @@ fun SongListItem(
     badges = badges,
     thumbnailContent = {
         ItemThumbnail(
-            thumbnailUrl = song.al.picUrl,
+            thumbnailUrl = song.al.picUrl.toCoverImageUrl(CoverImageSize.LIST),
             cacheKey = song.al.pic.toString(),
             albumIndex = albumIndex,
             isActive = isActive,
@@ -476,7 +478,7 @@ fun RadioListItem(
     badges = badges,
     thumbnailContent = {
         ItemThumbnail(
-            thumbnailUrl = radio.coverUrl,
+            thumbnailUrl = radio.coverUrl.toCoverImageUrl(CoverImageSize.LIST),
             cacheKey = radio.coverUrl,
             albumIndex = albumIndex,
             isActive = isActive,
@@ -507,7 +509,7 @@ fun CloudSongListItem(
     badges = badges,
     thumbnailContent = {
         ItemThumbnail(
-            thumbnailUrl = cloudSong.simpleSong.al?.picUrl,
+            thumbnailUrl = cloudSong.simpleSong.al?.picUrl.toCoverImageUrl(CoverImageSize.LIST),
             cacheKey = cloudSong.simpleSong.al?.pic.toString(),
             albumIndex = albumIndex,
             isActive = isActive,

@@ -60,6 +60,8 @@ import com.rcmiku.music.ui.components.NavigationTitle
 import com.rcmiku.music.ui.components.SongListItem
 import com.rcmiku.music.ui.components.SongMenuBottomSheet
 import com.rcmiku.music.ui.navigation.AlbumNav
+import com.rcmiku.music.utils.CoverImageSize
+import com.rcmiku.music.utils.toCoverImageUrl
 import com.rcmiku.music.viewModel.ArtistScreenViewModel
 import com.rcmiku.ncmapi.model.Song
 
@@ -95,7 +97,7 @@ fun ArtistScreen(
                 contentAlignment = Alignment.BottomStart
             ) {
                 AsyncImage(
-                    model = artistHeadInfoState?.data?.artist?.cover,
+                    model = artistHeadInfoState?.data?.artist?.cover.toCoverImageUrl(CoverImageSize.HERO),
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.aspectRatio(4f / 3f)

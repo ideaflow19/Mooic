@@ -58,7 +58,9 @@ import com.rcmiku.music.ui.icons.SongListAdd
 import com.rcmiku.music.ui.navigation.AlbumNav
 import com.rcmiku.music.ui.navigation.ArtistNav
 import com.rcmiku.music.utils.FavoriteSongIdsUtil
+import com.rcmiku.music.utils.CoverImageSize
 import com.rcmiku.music.utils.makeTimeString
+import com.rcmiku.music.utils.toCoverImageUrl
 import com.rcmiku.ncmapi.api.account.AccountApi
 import com.rcmiku.ncmapi.model.Song
 import kotlinx.coroutines.flow.map
@@ -109,7 +111,7 @@ fun SongMenuBottomSheet(
                                 .fillMaxWidth()
                         ) {
                             AsyncImage(
-                                model = it.al.picUrl,
+                                model = it.al.picUrl.toCoverImageUrl(CoverImageSize.LIST),
                                 contentDescription = null,
                                 contentScale = ContentScale.Crop,
                                 modifier = Modifier

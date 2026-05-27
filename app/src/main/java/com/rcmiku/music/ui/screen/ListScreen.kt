@@ -35,6 +35,8 @@ import com.rcmiku.music.constants.GridThumbnailHeight
 import com.rcmiku.music.constants.ThumbnailCornerRadius
 import com.rcmiku.music.ui.components.PlaylistGridItem
 import com.rcmiku.music.ui.navigation.PlaylistNav
+import com.rcmiku.music.utils.CoverImageSize
+import com.rcmiku.music.utils.toCoverImageUrl
 import com.rcmiku.music.viewModel.ExploreScreenViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
@@ -92,7 +94,7 @@ fun ListScreen(
                                     },
                                 ), thumbnailContent = {
                                 AsyncImage(
-                                    model = it.picUrl,
+                                    model = it.picUrl.toCoverImageUrl(CoverImageSize.GRID),
                                     contentDescription = null,
                                     contentScale = ContentScale.Crop,
                                     modifier = Modifier

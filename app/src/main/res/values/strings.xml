@@ -29,8 +29,6 @@
     <string name="voice_count">%d个声音</string>
     <string name="shuffle_on">shuffle on</string>
     <string name="shuffle_off">shuffle off</string>
-    <string name="newest_album_week">本周新碟</string>
-    <string name="newest_album_month">本月新碟</string>
     <string name="high_quality_playlist">精品歌单</string>
     <string name="level">LV.%d</string>
     <string name="favorite_music">我喜欢的音乐</string>

@@ -12,11 +12,13 @@ import com.rcmiku.music.constants.GridThumbnailHeight
 import com.rcmiku.music.constants.ListThumbnailSize
 import com.rcmiku.music.constants.PlaylistThumbnailSize
 import com.rcmiku.music.constants.ThumbnailCornerRadius
+import com.rcmiku.music.utils.CoverImageSize
+import com.rcmiku.music.utils.toCoverImageUrl
 
 @Composable
 fun ListThumbnailImage(url: Any?, modifier: Modifier = Modifier) =
     AsyncImage(
-        model = url,
+        model = url.toCoverImageUrl(CoverImageSize.LIST),
         contentDescription = null,
         contentScale = ContentScale.Crop,
         modifier = modifier
@@ -27,7 +29,7 @@ fun ListThumbnailImage(url: Any?, modifier: Modifier = Modifier) =
 @Composable
 fun GridThumbnailImage(url: Any?, modifier: Modifier = Modifier) =
     AsyncImage(
-        model = url,
+        model = url.toCoverImageUrl(CoverImageSize.GRID),
         contentDescription = null,
         contentScale = ContentScale.Crop,
         modifier = modifier
@@ -38,7 +40,7 @@ fun GridThumbnailImage(url: Any?, modifier: Modifier = Modifier) =
 @Composable
 fun PlaylistThumbnailImage(url: Any?, modifier: Modifier = Modifier) =
     AsyncImage(
-        model = url,
+        model = url.toCoverImageUrl(CoverImageSize.DETAIL),
         contentDescription = null,
         contentScale = ContentScale.Crop,
         modifier = modifier
@@ -49,7 +51,7 @@ fun PlaylistThumbnailImage(url: Any?, modifier: Modifier = Modifier) =
 @Composable
 fun RadioThumbnailImage(url: Any?, modifier: Modifier = Modifier) =
     AsyncImage(
-        model = url,
+        model = url.toCoverImageUrl(CoverImageSize.DETAIL),
         contentDescription = null,
         contentScale = ContentScale.Crop,
         modifier = modifier

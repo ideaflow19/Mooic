@@ -118,6 +118,8 @@ dependencies {
     implementation(libs.datastore.preferences)
     implementation(libs.protobuf.kotlin.lite)
     implementation(libs.media3)
+    implementation(libs.media3.database)
+    implementation(libs.media3.datasource)
     implementation(libs.media3.session)
     implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)

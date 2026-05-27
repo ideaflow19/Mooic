@@ -23,7 +23,7 @@ sealed class BottomBarTab(@StringRes val titleRes: Int, val icon: ImageVector, v
     )
 
     data object Library : BottomBarTab(
-        titleRes = R.string.library,
+        titleRes = R.string.mine,
         icon = LibraryMusic,
         route = Screen.Library.route
     )

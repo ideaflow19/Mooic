@@ -43,7 +43,9 @@ import com.rcmiku.music.ui.components.TopBar
 import com.rcmiku.music.ui.icons.Favorite
 import com.rcmiku.music.ui.icons.VipFill
 import com.rcmiku.music.ui.navigation.PlaylistNav
+import com.rcmiku.music.utils.CoverImageSize
 import com.rcmiku.music.utils.rememberPreference
+import com.rcmiku.music.utils.toCoverImageUrl
 import com.rcmiku.music.viewModel.LibraryScreenViewModel
 import com.rcmiku.ncmapi.model.Playlist
 import com.rcmiku.ncmapi.model.UserInfoBatch
@@ -75,7 +77,7 @@ fun LibraryScreen(
 
     Scaffold(
         topBar = {
-            TopBar(navController = navController, titleRes = R.string.library)
+            TopBar(navController = navController, titleRes = R.string.mine)
         }
     ) { padding ->
         LazyColumn(
@@ -364,7 +366,7 @@ private fun RowCardContent(
         verticalAlignment = Alignment.CenterVertically
     ) {
         AsyncImage(
-            model = coverUrl,
+            model = coverUrl.toCoverImageUrl(CoverImageSize.LIST),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
