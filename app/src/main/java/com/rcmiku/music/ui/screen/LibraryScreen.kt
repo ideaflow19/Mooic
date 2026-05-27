@@ -159,9 +159,7 @@ fun LibraryScreen(
 @Composable
 private fun LibraryUserCard(userInfo: UserInfoBatch) {
     val profile = userInfo.account.profile
-    val secondaryText = profile.signature.ifBlank {
-        stringResource(R.string.level, userInfo.level.data.level)
-    }
+    val secondaryText = profile.signature.takeIf { it.isNotBlank() }
 
     Box(
         modifier = Modifier
@@ -192,18 +190,20 @@ private fun LibraryUserCard(userInfo: UserInfoBatch) {
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-                Surface(
-                    shape = CircleShape,
-                    color = MaterialTheme.colorScheme.secondaryContainer
-                ) {
-                    Text(
-                        text = secondaryText,
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer,
-                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
+                secondaryText?.let {
+                    Surface(
+                        shape = CircleShape,
+                        color = MaterialTheme.colorScheme.secondaryContainer
+                    ) {
+                        Text(
+                            text = it,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSecondaryContainer,
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
                 }
             }
         }

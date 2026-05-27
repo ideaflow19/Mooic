@@ -58,6 +58,7 @@ import com.rcmiku.music.ui.icons.Logout
 import com.rcmiku.music.ui.icons.PlayPause
 import com.rcmiku.music.ui.icons.SkipNext
 import com.rcmiku.music.ui.icons.UserRound
+import com.rcmiku.music.ui.icons.VipUser
 import com.rcmiku.music.ui.navigation.Screen
 import com.rcmiku.music.utils.getItemShape
 import com.rcmiku.music.utils.rememberEnumPreference
@@ -145,10 +146,14 @@ fun SettingsScreen(navController: NavHostController) {
 
     val settingsItems = listOf(
         SettingItemData(
-            title = stringResource(R.string.dev),
-            subtitle = "rcmiku",
+            title = "kid-depress",
             imageVector = UserRound,
-            onClick = { uriHandler.openUri("https://github.com/rcmiku") }
+            onClick = { uriHandler.openUri("https://github.com/kid-depress") }
+        ),
+        SettingItemData(
+            title = stringResource(R.string.contact_author),
+            imageVector = VipUser,
+            onClick = { uriHandler.openUri("https://qm.qq.com/q/CNTuNPHdrc") }
         ),
         SettingItemData(
             title = stringResource(R.string.source_code),
