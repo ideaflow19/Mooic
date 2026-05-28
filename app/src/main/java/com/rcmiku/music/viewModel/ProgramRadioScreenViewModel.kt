@@ -40,8 +40,8 @@ class ProgramRadioScreenViewModel @Inject constructor(savedStateHandle: SavedSta
     val radioList = radioId?.let { id ->
         Pager(
             config = PagingConfig(
-                pageSize = 500,
-                prefetchDistance = 100,
+                pageSize = 100,
+                prefetchDistance = 20,
                 enablePlaceholders = false
             ),
             pagingSourceFactory = { RadioPagingSource(id) }

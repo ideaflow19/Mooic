@@ -11,11 +11,13 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -104,17 +106,21 @@ fun MainScreen() {
                     showNavigationBar, enter = expandVertically(),
                     exit = shrinkVertically()
                 ) {
-                    NavigationBar {
+                    NavigationBar(
+                        modifier = Modifier.height(64.dp)
+                    ) {
                         tabs.forEach { item ->
                             NavigationBarItem(
                                 icon = {
                                     Icon(
                                         imageVector = item.icon,
-                                        contentDescription = stringResource(id = item.titleRes)
+                                        contentDescription = stringResource(id = item.titleRes),
+                                        modifier = Modifier.size(28.dp)
                                     )
                                 },
-                                label = { Text(stringResource(id = item.titleRes)) },
                                 selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
+                                alwaysShowLabel = false,
+                                modifier = Modifier.padding(vertical = 2.dp),
                                 onClick = {
                                     navController.navigate(item.route) {
                                         popUpTo(navController.graph.findStartDestination().id) {

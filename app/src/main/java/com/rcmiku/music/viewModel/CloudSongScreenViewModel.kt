@@ -18,8 +18,8 @@ class CloudSongScreenViewModel @Inject constructor(savedStateHandle: SavedStateH
 
     val cloudSong = Pager(
         config = PagingConfig(
-            pageSize = 500,
-            prefetchDistance = 50,
+            pageSize = 100,
+            prefetchDistance = 20,
             enablePlaceholders = false
         ),
         pagingSourceFactory = { CloudPagingSource() }

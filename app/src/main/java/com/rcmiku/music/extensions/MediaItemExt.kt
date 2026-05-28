@@ -28,7 +28,7 @@ fun Song.toMediaItem() =
                 MediaMetadata.Builder()
                     .setArtist(this.ar.joinToString("/") { it.name })
                     .setTitle(this.name)
-                    .setArtworkUri(this.al.picUrl.toCoverImageUrl(CoverImageSize.HERO)?.toUri())
+                    .setArtworkUri(this.al.picUrl.toCoverImageUrl(CoverImageSize.DETAIL)?.toUri())
                     .setExtras(Bundle().apply {
                         putString(
                             "song",
@@ -50,7 +50,7 @@ fun List<Song>.toMediaItemList() =
                 MediaMetadata.Builder()
                     .setArtist(song.ar.joinToString("/") { artist -> artist.name })
                     .setTitle(song.name)
-                    .setArtworkUri(song.al.picUrl.toCoverImageUrl(CoverImageSize.HERO)?.toUri())
+                    .setArtworkUri(song.al.picUrl.toCoverImageUrl(CoverImageSize.DETAIL)?.toUri())
                     .setExtras(extras)
                     .build()
             )
@@ -68,7 +68,7 @@ fun List<CloudSong>.toCloudSongMediaItemList(uid: Long) =
                     .setArtist(cloudSong.artist)
                     .setTitle(cloudSong.simpleSong.name)
                     .setArtworkUri(
-                        cloudSong.simpleSong.al?.picUrl.toCoverImageUrl(CoverImageSize.HERO)?.toUri()
+                        cloudSong.simpleSong.al?.picUrl.toCoverImageUrl(CoverImageSize.DETAIL)?.toUri()
                     )
                     .build()
             )
@@ -84,7 +84,7 @@ fun List<Radio>.toRadioMediaItemList() =
                 MediaMetadata.Builder()
                     .setArtist(radio.mainSong.artists.joinToString { it.name })
                     .setTitle(radio.mainSong.name)
-                    .setArtworkUri(radio.coverUrl.toCoverImageUrl(CoverImageSize.HERO)?.toUri())
+                    .setArtworkUri(radio.coverUrl.toCoverImageUrl(CoverImageSize.DETAIL)?.toUri())
                     .build()
             )
             .build()

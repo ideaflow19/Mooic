@@ -17,6 +17,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -34,6 +36,7 @@ class SearchViewModel @Inject constructor(
     private val _suggestKeywordResponse = MutableStateFlow<SearchSuggestKeywordResponse?>(null)
     val suggestKeywordResponse: StateFlow<SearchSuggestKeywordResponse?> =
         _suggestKeywordResponse.asStateFlow()
+    private var suggestJob: Job? = null
 
     fun updateSearchType(searchType: SearchType) {
         _searchType.value = searchType
@@ -47,7 +50,9 @@ class SearchViewModel @Inject constructor(
     }
 
     fun fetchSearchKeyword(searchValue: String) {
-        viewModelScope.launch {
+        suggestJob?.cancel()
+        suggestJob = viewModelScope.launch {
+            delay(300)
             _suggestKeywordResponse.value = SearchApi.searchSuggestKeyword(searchValue).getOrNull()
         }
     }
