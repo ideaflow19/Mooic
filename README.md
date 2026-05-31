@@ -1,22 +1,22 @@
 # JetMelo
 <img src="app\src\main\res\mipmap-xxxhdpi\ic_launcher_round.webp" height="72">
 
-A Material 3 Netease Cloud Music client for Android
+一个基于 Material 3 设计的 Android 网易云音乐客户端
 
 [![Latest release](https://img.shields.io/github/v/release/rcmiku/JetMelo?include_prereleases)](https://github.com/rcmiku/JetMelo/releases)
 [![GitHub License](https://img.shields.io/github/license/rcmiku/JetMelo)](https://www.gnu.org/licenses/gpl-3.0)
 [![Downloads](https://img.shields.io/github/downloads/rcmiku/JetMelo/total)](https://github.com/rcmiku/JetMelo/releases)
 
-## Features
+## 功能特性
 
-- Play songs from Netease Cloud Music
-- Background playback
-- Search songs, albums, and playlists from Cloud Netease Music
-- Login support
-- Synchronized lyrics
-- Personalized quick picks
+- 播放网易云音乐歌曲
+- 支持后台播放
+- 搜索网易云音乐中的歌曲、专辑和歌单
+- 支持登录
+- 支持同步歌词
+- 提供个性化推荐
 
-## Screenshot
+## 截图
 
 <table>
   <tr>
@@ -36,7 +36,7 @@ A Material 3 Netease Cloud Music client for Android
   </tr>
 </table>
 
-## Credit
+## 致谢
 
 - [InnerTune](https://github.com/z-huang/InnerTune)
 - [Protobuf](https://github.com/protocolbuffers/protobuf)
@@ -45,12 +45,12 @@ A Material 3 Netease Cloud Music client for Android
 - [Coil](https://github.com/coil-kt/coil)
 - [Ksp](https://github.com/google/ksp)
 
-## Disclaimer
+## 免责声明
 
-This software is not affiliated with, funded, authorized, or endorsed by NetEase Cloud Music, Hangzhou NetEase Cloud Music Technology Co., or any of its affiliates.
+本软件与网易云音乐、杭州网易云音乐科技有限公司及其任何关联公司不存在隶属、资助、授权或认可关系。
 
-This software does not provide any VIP audio decryption or unlocking services. You must obtain the appropriate membership on the respective platform to access such content.
+本软件不提供任何 VIP 音频解密或解锁服务。访问相关内容前，你需要在对应平台取得合法会员资格。
 
-This software is for learning and communication purposes only and should not be used for commercial purposes.
+本软件仅供学习与交流使用，不得用于商业用途。
 
-Any trademarks, service marks, trade names, or other intellectual property rights used in this software belong to their respective owners.
+本软件中涉及的任何商标、服务标记、商号或其他知识产权，均归其各自权利人所有。
