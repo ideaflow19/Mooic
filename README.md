@@ -1,4 +1,4 @@
-# JetMelo
+# Mooic
 <img src="app\src\main\res\mipmap-xxxhdpi\ic_launcher_round.webp" height="72">
 
 一个基于 Material 3 设计的 Android 网易云音乐客户端
