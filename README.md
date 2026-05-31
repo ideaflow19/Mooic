@@ -29,15 +29,11 @@
     <td><img src="screenshot/05.jpg" width="200" /></td>
     <td><img src="screenshot/06.jpg" width="200" /></td>
   </tr>
-  <tr>
-    <td><img src="screenshot/07.jpg" width="200" /></td>
-    <td><img src="screenshot/08.jpg" width="200" /></td>
-    <td><img src="screenshot/09.jpg" width="200" /></td>
-  </tr>
 </table>
 
-## 致谢
 
+## 致谢
+- [JetMelo](https://github.com/rcmiku/JetMelo)
 - [InnerTune](https://github.com/z-huang/InnerTune)
 - [Protobuf](https://github.com/protocolbuffers/protobuf)
 - [Reorderable](https://github.com/Calvin-LL/Reorderable)
