@@ -85,8 +85,8 @@ fun SettingsScreen(navController: NavHostController) {
     var themeSeed by rememberEnumPreference(themeSeedColorKey, defaultValue = AppThemeSeed.PURPLE)
     var autoSkipNextOnError by rememberPreference(autoSkipNextOnErrorKey, false)
     var ncmCookie by rememberPreference(ncmCookieKey, "")
-    var apiBaseUrl by rememberPreference(apiBaseUrlKey, "http://152.136.23.59:4000")
-    var unblockBaseUrl by rememberPreference(unblockBaseUrlKey, "http://152.136.23.59:3000")
+    var apiBaseUrl by rememberPreference(apiBaseUrlKey, "https://ncm-api.prod.gbclstudio.cn")
+    var unblockBaseUrl by rememberPreference(unblockBaseUrlKey, "https://unm-server.focalors.ltd")
 
     var showQualityDialog by remember { mutableStateOf(false) }
     var showThemeSeedDialog by remember { mutableStateOf(false) }
@@ -298,7 +298,7 @@ fun SettingsScreen(navController: NavHostController) {
         UrlEditDialog(
             title = stringResource(R.string.api_server),
             currentUrl = apiBaseUrl,
-            defaultUrl = "http://152.136.23.59:4000",
+            defaultUrl = "https://ncm-api.prod.gbclstudio.cn",
             onDismiss = { showApiUrlDialog = false },
             onConfirm = { apiBaseUrl = it }
         )
@@ -308,7 +308,7 @@ fun SettingsScreen(navController: NavHostController) {
         UrlEditDialog(
             title = stringResource(R.string.unblock_server),
             currentUrl = unblockBaseUrl,
-            defaultUrl = "http://152.136.23.59:3000",
+            defaultUrl = "https://unm-server.focalors.ltd",
             onDismiss = { showUnblockUrlDialog = false },
             onConfirm = { unblockBaseUrl = it }
         )
