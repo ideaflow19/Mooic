@@ -35,8 +35,11 @@ class MainActivity : ComponentActivity() {
         playerController = PlayerController
         setContent {
             playerController.controller?.run {
-                init(applicationContext)
-                playerState = state(applicationContext)
+                if (playerState?.player !== this) {
+                    playerState?.dispose()
+                    init(applicationContext)
+                    playerState = state(applicationContext)
+                }
             }
             JetMeloTheme {
                 CompositionLocalProvider(
@@ -47,6 +50,12 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        playerState?.dispose()
+        playerState = null
+        super.onDestroy()
     }
 
 }

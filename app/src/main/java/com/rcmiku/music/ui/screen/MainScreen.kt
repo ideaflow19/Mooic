@@ -31,7 +31,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import androidx.media3.common.Player.STATE_READY
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -67,17 +69,23 @@ fun MainScreen() {
     var duration by rememberSaveable(playerState) {
         mutableLongStateOf(playerState?.player?.duration ?: 0)
     }
-    val playbackState = playerState?.playbackState
+    val isPlaying = playerState?.isPlaying == true
+    val lifecycleOwner = LocalLifecycleOwner.current
     val showMiniPlayer =
         (playerState?.player?.mediaItemCount ?: 0) != 0
     val currentMediaId = playerState?.currentMediaItem?.mediaId
     var currentPlayMediaId by rememberPreference(currentPlayMediaIdKey, 0)
-    LaunchedEffect(playbackState) {
-        if (playbackState == STATE_READY) {
+    LaunchedEffect(playerState, isPlaying, lifecycleOwner) {
+        val player = playerState?.player ?: return@LaunchedEffect
+        position = player.currentPosition
+        duration = player.duration
+        if (!isPlaying) return@LaunchedEffect
+
+        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             while (isActive) {
+                position = player.currentPosition
+                duration = player.duration
                 delay(1000)
-                position = playerState.player.currentPosition
-                duration = playerState.player.duration
             }
         }
     }

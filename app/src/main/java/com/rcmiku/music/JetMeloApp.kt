@@ -24,8 +24,10 @@ import com.rcmiku.ncmapi.utils.FileProvider
 import com.rcmiku.ncmapi.utils.UserAgentProvider
 import com.rcmiku.ncmapi.utils.json
 import dagger.hilt.android.HiltAndroidApp
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -33,15 +35,16 @@ import kotlinx.coroutines.launch
 @HiltAndroidApp
 class JetMeloApp : Application(), SingletonImageLoader.Factory {
 
+    private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
     @androidx.annotation.OptIn(UnstableApi::class)
-    @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate() {
         super.onCreate()
         PlayerController.init(this)
         FileProvider.init(cacheDir.resolve("ncm"))
         SongListUtil.init(filesDir.resolve("playlist"))
         UserAgentProvider.init(UserAgentUtil.DEFAULT_USER_AGENT)
-        GlobalScope.launch {
+        applicationScope.launch {
             UserAgentProvider.init(UserAgentUtil.DEFAULT_USER_AGENT)
             dataStore.data
                 .map { it[ncmCookieKey] }
@@ -51,7 +54,7 @@ class JetMeloApp : Application(), SingletonImageLoader.Factory {
                         CookieProvider.init(json.decodeFromString(ncmCookie))
                 }
         }
-        GlobalScope.launch {
+        applicationScope.launch {
             dataStore.data
                 .map { prefs ->
                     prefs[apiBaseUrlKey] to prefs[unblockBaseUrlKey]
@@ -62,6 +65,11 @@ class JetMeloApp : Application(), SingletonImageLoader.Factory {
                     if (!unblockUrl.isNullOrEmpty()) UNBLOCK_BASE_URL = unblockUrl
                 }
         }
+    }
+
+    override fun onTerminate() {
+        applicationScope.cancel()
+        super.onTerminate()
     }
 
     override fun newImageLoader(context: PlatformContext): ImageLoader {
