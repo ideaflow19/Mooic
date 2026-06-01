@@ -37,6 +37,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.rcmiku.music.LocalPlayerState
+import com.rcmiku.music.constants.BottomNavigationHeight
 import com.rcmiku.music.constants.MiniPlayerHeight
 import com.rcmiku.music.constants.currentPlayMediaIdKey
 import com.rcmiku.music.constants.ncmCookieKey
@@ -107,7 +108,7 @@ fun MainScreen() {
                     exit = shrinkVertically()
                 ) {
                     NavigationBar(
-                        modifier = Modifier.height(64.dp)
+                        modifier = Modifier.height(BottomNavigationHeight)
                     ) {
                         tabs.forEach { item ->
                             NavigationBarItem(

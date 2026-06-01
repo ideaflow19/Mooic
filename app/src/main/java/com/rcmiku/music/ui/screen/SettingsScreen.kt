@@ -1,5 +1,6 @@
 package com.rcmiku.music.ui.screen
 
+import android.os.Build
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.combinedClickable
@@ -48,11 +49,14 @@ import com.rcmiku.music.constants.SettingItemSubCorner
 import com.rcmiku.music.constants.apiBaseUrlKey
 import com.rcmiku.music.constants.audioQualityKey
 import com.rcmiku.music.constants.autoSkipNextOnErrorKey
+import com.rcmiku.music.constants.dynamicThemeColorKey
 import com.rcmiku.music.constants.ncmCookieKey
+import com.rcmiku.music.constants.themeSeedColorKey
 import com.rcmiku.music.constants.unblockBaseUrlKey
 import com.rcmiku.music.constants.use40DpIconKey
 import com.rcmiku.music.ui.components.Dialog
 import com.rcmiku.music.ui.components.SongQualityDialog
+import com.rcmiku.music.ui.components.ThemeSeedDialog
 import com.rcmiku.music.ui.components.UrlEditDialog
 import com.rcmiku.music.ui.icons.Dns
 import com.rcmiku.music.ui.icons.Github
@@ -64,11 +68,11 @@ import com.rcmiku.music.ui.icons.SkipNext
 import com.rcmiku.music.ui.icons.UserRound
 import com.rcmiku.music.ui.icons.VipUser
 import com.rcmiku.music.ui.navigation.Screen
+import com.rcmiku.music.ui.theme.AppThemeSeed
 import com.rcmiku.music.utils.getItemShape
 import com.rcmiku.music.utils.rememberEnumPreference
 import com.rcmiku.music.utils.rememberPreference
 import com.rcmiku.ncmapi.api.player.SongLevel
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -77,24 +81,43 @@ fun SettingsScreen(navController: NavHostController) {
 
     var use40DpIcon by rememberPreference(use40DpIconKey, false)
     var audioQuality by rememberEnumPreference(audioQualityKey, defaultValue = SongLevel.STANDARD)
-    var showQualityDialog by remember { mutableStateOf(false) }
-    var showApiUrlDialog by remember { mutableStateOf(false) }
-    var showUnblockUrlDialog by remember { mutableStateOf(false) }
+    var useDynamicThemeColor by rememberPreference(dynamicThemeColorKey, false)
+    var themeSeed by rememberEnumPreference(themeSeedColorKey, defaultValue = AppThemeSeed.PURPLE)
     var autoSkipNextOnError by rememberPreference(autoSkipNextOnErrorKey, false)
-    var logout by rememberSaveable { mutableStateOf(false) }
     var ncmCookie by rememberPreference(ncmCookieKey, "")
     var apiBaseUrl by rememberPreference(apiBaseUrlKey, "http://152.136.23.59:4000")
     var unblockBaseUrl by rememberPreference(unblockBaseUrlKey, "http://152.136.23.59:3000")
 
+    var showQualityDialog by remember { mutableStateOf(false) }
+    var showThemeSeedDialog by remember { mutableStateOf(false) }
+    var showApiUrlDialog by remember { mutableStateOf(false) }
+    var showUnblockUrlDialog by remember { mutableStateOf(false) }
+    var logout by rememberSaveable { mutableStateOf(false) }
+
+    val dynamicColorAvailable = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+    val appearanceTitle = "\u5916\u89c2\u8bbe\u7f6e"
+    val appearanceSubtitle = when {
+        useDynamicThemeColor && dynamicColorAvailable -> "\u58c1\u7eb8\u52a8\u6001\u53d6\u8272"
+        useDynamicThemeColor -> "\u58c1\u7eb8\u52a8\u6001\u53d6\u8272 (\u5f53\u524d\u4e0d\u53ef\u7528)"
+        else -> "\u4e3b\u9898\u8272: ${themeSeed.label}"
+    }
+
     val baseSettingItems = listOf(
+        SettingItemData(
+            title = appearanceTitle,
+            subtitle = appearanceSubtitle,
+            imageVector = GraphicEq,
+            onClick = { showThemeSeedDialog = true }
+        ),
         SettingItemData(
             title = stringResource(if (ncmCookie.isNotEmpty()) R.string.logout else R.string.login),
             imageVector = if (ncmCookie.isNotEmpty()) Logout else Login,
             onClick = {
-                if (ncmCookie.isNotEmpty())
+                if (ncmCookie.isNotEmpty()) {
                     logout = true
-                else
+                } else {
                     navController.navigate(Screen.Login.route)
+                }
             }
         ),
         SettingItemData(
@@ -104,16 +127,13 @@ fun SettingsScreen(navController: NavHostController) {
             trailingContent = {
                 Switch(
                     checked = use40DpIcon,
-                    onCheckedChange = {
-                        use40DpIcon = it
-                    }
+                    onCheckedChange = { use40DpIcon = it }
                 )
                 Spacer(Modifier.width(12.dp))
             },
-            onClick = {
-                use40DpIcon = !use40DpIcon
-            }
-        ), SettingItemData(
+            onClick = { use40DpIcon = !use40DpIcon }
+        ),
+        SettingItemData(
             title = stringResource(R.string.audio_quality),
             subtitle = when (audioQuality) {
                 SongLevel.STANDARD -> stringResource(R.string.standard)
@@ -121,17 +141,9 @@ fun SettingsScreen(navController: NavHostController) {
                 SongLevel.EXHIGH -> stringResource(R.string.exhigh)
                 SongLevel.LOSSLESS -> stringResource(R.string.lossless)
                 SongLevel.HIRES -> stringResource(R.string.hi_res)
-//                SongLevel.JYEFFECT -> stringResource(R.string.jyeffect)
-//                SongLevel.SKY -> stringResource(R.string.sky)
-//                SongLevel.JYMASTER -> stringResource(R.string.jymaster)
             },
             imageVector = GraphicEq,
-            trailingContent = {
-
-            },
-            onClick = {
-                showQualityDialog = true
-            }
+            onClick = { showQualityDialog = true }
         ),
         SettingItemData(
             title = stringResource(R.string.auto_skip),
@@ -139,15 +151,11 @@ fun SettingsScreen(navController: NavHostController) {
             trailingContent = {
                 Switch(
                     checked = autoSkipNextOnError,
-                    onCheckedChange = {
-                        autoSkipNextOnError = it
-                    }
+                    onCheckedChange = { autoSkipNextOnError = it }
                 )
                 Spacer(Modifier.width(12.dp))
             },
-            onClick = {
-                autoSkipNextOnError = !autoSkipNextOnError
-            }
+            onClick = { autoSkipNextOnError = !autoSkipNextOnError }
         ),
         SettingItemData(
             title = stringResource(R.string.api_server),
@@ -162,7 +170,6 @@ fun SettingsScreen(navController: NavHostController) {
             onClick = { showUnblockUrlDialog = true }
         )
     )
-
 
     val settingsItems = listOf(
         SettingItemData(
@@ -187,9 +194,7 @@ fun SettingsScreen(navController: NavHostController) {
             TopAppBar(
                 title = { Text(stringResource(R.string.settings)) },
                 navigationIcon = {
-                    IconButton(onClick = {
-                        navController.navigateUp()
-                    }) {
+                    IconButton(onClick = { navController.navigateUp() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = null
@@ -265,6 +270,17 @@ fun SettingsScreen(navController: NavHostController) {
         )
     }
 
+    if (showThemeSeedDialog) {
+        ThemeSeedDialog(
+            currentSeed = themeSeed,
+            dynamicColorAvailable = dynamicColorAvailable,
+            dynamicColorEnabled = useDynamicThemeColor,
+            onDismiss = { showThemeSeedDialog = false },
+            onDynamicColorChange = { useDynamicThemeColor = it },
+            onSeedSelected = { themeSeed = it }
+        )
+    }
+
     if (logout) {
         Dialog(
             onConfirmation = {
@@ -335,11 +351,7 @@ fun SettingItem(
         modifier = Modifier
             .fillMaxWidth()
             .heightIn(min = SettingItemHeight)
-            .combinedClickable(
-                onClick = {
-                    onClick?.invoke()
-                },
-            ),
+            .combinedClickable(onClick = { onClick?.invoke() }),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
