@@ -106,6 +106,14 @@ class SearchViewModel @Inject constructor(
         }
     }
 
+    fun clearSearchHistory() {
+        viewModelScope.launch {
+            context.searchHistoryDataStore.updateData { currentHistory ->
+                currentHistory.toBuilder().clearHistory().build()
+            }
+        }
+    }
+
     private suspend fun removeSearchQuery(context: Context, query: String) {
         context.searchHistoryDataStore.updateData { currentHistory ->
             val historyList = currentHistory.historyList.toMutableList()

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,6 +28,7 @@ import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -63,6 +65,7 @@ import com.rcmiku.music.ui.components.SongMenuBottomSheet
 import com.rcmiku.music.ui.components.VoiceListItem
 import com.rcmiku.music.ui.icons.ArrowInsert
 import com.rcmiku.music.ui.icons.History
+import com.rcmiku.music.ui.icons.Remove
 import com.rcmiku.music.ui.icons.Search
 import com.rcmiku.music.ui.navigation.AlbumNav
 import com.rcmiku.music.ui.navigation.ArtistNav
@@ -169,6 +172,35 @@ fun SearchScreen(
                             }, onDelete = {
 
                             })
+                        }
+                    }
+
+                    if (searchHistoryState.isNotEmpty()) {
+                        item {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "搜索记录",
+                                    style = MaterialTheme.typography.titleSmall
+                                )
+                                TextButton(
+                                    onClick = {
+                                        searchViewModel.clearSearchHistory()
+                                        haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = Remove,
+                                        contentDescription = null
+                                    )
+                                    Text(text = "清空")
+                                }
+                            }
                         }
                     }
 
