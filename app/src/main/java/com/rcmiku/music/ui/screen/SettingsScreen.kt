@@ -86,7 +86,7 @@ fun SettingsScreen(navController: NavHostController) {
     var autoSkipNextOnError by rememberPreference(autoSkipNextOnErrorKey, false)
     var ncmCookie by rememberPreference(ncmCookieKey, "")
     var apiBaseUrl by rememberPreference(apiBaseUrlKey, "https://ncm-api.prod.gbclstudio.cn")
-    var unblockBaseUrl by rememberPreference(unblockBaseUrlKey, "https://unm-server.focalors.ltd")
+    var unblockBaseUrl by rememberPreference(unblockBaseUrlKey, "https://unlock.depresskid.top")
 
     var showQualityDialog by remember { mutableStateOf(false) }
     var showThemeSeedDialog by remember { mutableStateOf(false) }
@@ -308,7 +308,7 @@ fun SettingsScreen(navController: NavHostController) {
         UrlEditDialog(
             title = stringResource(R.string.unblock_server),
             currentUrl = unblockBaseUrl,
-            defaultUrl = "https://unm-server.focalors.ltd",
+            defaultUrl = "https://unlock.depresskid.top",
             onDismiss = { showUnblockUrlDialog = false },
             onConfirm = { unblockBaseUrl = it }
         )

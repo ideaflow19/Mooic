@@ -19,6 +19,8 @@ internal val Player.currentMediaItems: List<MediaItem>
     }
 
 internal val cacheSongs: MutableStateFlow<List<Song>?> = MutableStateFlow(null)
+private var cacheSourceId: Long = 0L
+private var cacheSourceName: String = "list"
 
 fun Player.init(context: Context) {
     val currentPlayMediaId = context.dataStore[currentPlayMediaIdKey]
@@ -34,21 +36,27 @@ fun Player.init(context: Context) {
     }
 }
 
-fun Player.setPlaylist(songs: List<Song>) {
-    if (cacheSongs.value != songs) {
+fun Player.setPlaylist(songs: List<Song>, sourceId: Long = 0L, sourceName: String = "list") {
+    if (cacheSongs.value != songs || cacheSourceId != sourceId || cacheSourceName != sourceName) {
         cacheSongs.value = songs
-        setMediaItems(songs.toMediaItemList())
+        cacheSourceId = sourceId
+        cacheSourceName = sourceName
+        setMediaItems(songs.toMediaItemList(sourceId = sourceId, sourceName = sourceName))
         SongListUtil.saveSongList(songs)
     }
 }
 
 fun Player.setCloudSongPlaylist(uid: Long, cloudSongs: List<CloudSong>) {
     cacheSongs.value = null
+    cacheSourceId = 0L
+    cacheSourceName = "cloud"
     setMediaItems(cloudSongs.toCloudSongMediaItemList(uid = uid))
 }
 
 fun Player.setRadioPlaylist(radio: List<Radio>) {
     cacheSongs.value = null
+    cacheSourceId = 0L
+    cacheSourceName = "radio"
     setMediaItems(radio.toRadioMediaItemList())
 }
 

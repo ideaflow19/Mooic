@@ -1,6 +1,7 @@
 package com.rcmiku.ncmapi.api.account
 
 import com.rcmiku.ncmapi.api.apiGet
+import com.rcmiku.ncmapi.api.player.SongLevel
 import com.rcmiku.ncmapi.model.*
 
 object AccountApi {
@@ -95,6 +96,31 @@ object AccountApi {
 
     suspend fun songRecord(uid: Long, type: SongRecordType): Result<RecordResponse> =
         apiGet("/user/record", mapOf("uid" to uid, "type" to type.type))
+
+    suspend fun scrobble(
+        songId: Long,
+        time: Int,
+        total: Int? = null,
+        sourceId: Long? = null,
+        sourceName: String? = null,
+        songName: String? = null,
+        artistName: String? = null,
+        songLevel: SongLevel? = null
+    ): Result<ApiCodeResponse> =
+        apiGet(
+            "/scrobble/v1",
+            buildMap {
+                put("id", songId)
+                put("time", time.coerceAtLeast(1))
+                total?.takeIf { it > 0 }?.let { put("total", it) }
+                sourceId?.takeIf { it > 0 }?.let { put("sourceid", it) }
+                sourceName?.takeIf { it.isNotBlank() }?.let { put("source", it) }
+                songName?.takeIf { it.isNotBlank() }?.let { put("name", it) }
+                artistName?.takeIf { it.isNotBlank() }?.let { put("artist", it) }
+                songLevel?.let { put("level", it.value) }
+                put("timestamp", System.currentTimeMillis())
+            }
+        )
 
     @kotlinx.serialization.Serializable
     data class UserPlaylistRawResponse(

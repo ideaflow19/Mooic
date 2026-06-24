@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.core.net.toUri
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
+import com.rcmiku.music.constants.MediaSessionConstants
 import com.rcmiku.ncmapi.api.player.PlayerApi
 import com.rcmiku.ncmapi.api.player.SongLevel
 import com.rcmiku.music.utils.CoverImageSize
@@ -20,29 +21,37 @@ private fun Song.encodeUri(): String {
     return "$base?fee=$fee&pl=$pl"
 }
 
-fun Song.toMediaItem() =
+fun Song.toMediaItem(sourceId: Long = 0L, sourceName: String = "list") =
     MediaItem.Builder()
         .setUri(this.encodeUri())
         .setMediaId(this.id.toString())
-            .setMediaMetadata(
-                MediaMetadata.Builder()
-                    .setArtist(this.ar.joinToString("/") { it.name })
-                    .setTitle(this.name)
-                    .setArtworkUri(this.al.picUrl.toCoverImageUrl(CoverImageSize.DETAIL)?.toUri())
-                    .setExtras(Bundle().apply {
-                        putString(
-                            "song",
+        .setMediaMetadata(
+            MediaMetadata.Builder()
+                .setArtist(this.ar.joinToString("/") { it.name })
+                .setTitle(this.name)
+                .setArtworkUri(this.al.picUrl.toCoverImageUrl(CoverImageSize.DETAIL)?.toUri())
+                .setExtras(Bundle().apply {
+                    putString(
+                        "song",
                         json.encodeToString(this@toMediaItem)
                     )
+                    putLong(MediaSessionConstants.EXTRA_SOURCE_ID, sourceId)
+                    putString(MediaSessionConstants.EXTRA_SOURCE_NAME, sourceName)
+                    putLong(MediaSessionConstants.EXTRA_DURATION_MS, dt)
                 })
                 .build()
         )
         .build()
 
 
-fun List<Song>.toMediaItemList() =
+fun List<Song>.toMediaItemList(sourceId: Long = 0L, sourceName: String = "list") =
     this.map { song ->
-        val extras = Bundle().apply { putString("song", json.encodeToString(song)) }
+        val extras = Bundle().apply {
+            putString("song", json.encodeToString(song))
+            putLong(MediaSessionConstants.EXTRA_SOURCE_ID, sourceId)
+            putString(MediaSessionConstants.EXTRA_SOURCE_NAME, sourceName)
+            putLong(MediaSessionConstants.EXTRA_DURATION_MS, song.dt)
+        }
         MediaItem.Builder()
             .setUri(song.encodeUri())
             .setMediaId(song.id.toString())
@@ -70,6 +79,10 @@ fun List<CloudSong>.toCloudSongMediaItemList(uid: Long) =
                     .setArtworkUri(
                         cloudSong.simpleSong.al?.picUrl.toCoverImageUrl(CoverImageSize.DETAIL)?.toUri()
                     )
+                    .setExtras(Bundle().apply {
+                        putString(MediaSessionConstants.EXTRA_SOURCE_NAME, "cloud")
+                        putLong(MediaSessionConstants.EXTRA_DURATION_MS, cloudSong.simpleSong.dt)
+                    })
                     .build()
             )
             .build()
@@ -85,6 +98,11 @@ fun List<Radio>.toRadioMediaItemList() =
                     .setArtist(radio.mainSong.artists.joinToString { it.name })
                     .setTitle(radio.mainSong.name)
                     .setArtworkUri(radio.coverUrl.toCoverImageUrl(CoverImageSize.DETAIL)?.toUri())
+                    .setExtras(Bundle().apply {
+                        putLong(MediaSessionConstants.EXTRA_SOURCE_ID, radio.id)
+                        putString(MediaSessionConstants.EXTRA_SOURCE_NAME, "radio")
+                        putLong(MediaSessionConstants.EXTRA_DURATION_MS, radio.mainSong.duration)
+                    })
                     .build()
             )
             .build()

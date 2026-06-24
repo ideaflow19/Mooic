@@ -1,4 +1,5 @@
 import com.android.build.gradle.tasks.PackageAndroidArtifact
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
@@ -9,6 +10,15 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.protobuf)
 }
+
+val localProperties = Properties().apply {
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.isFile) {
+        localPropertiesFile.inputStream().use(::load)
+    }
+}
+
+fun localProperty(name: String): String? = localProperties.getProperty(name)
 
 android {
     namespace = "com.rcmiku.music"
@@ -25,11 +35,17 @@ android {
     }
 
     signingConfigs {
-        register("release") {
-            enableV1Signing = true
-            enableV2Signing = true
-            enableV3Signing = true
-            enableV4Signing = true
+        localProperty("RELEASE_STORE_FILE")?.takeIf { it.isNotBlank() }?.let { releaseStoreFile ->
+            register("release") {
+                storeFile = rootProject.file(releaseStoreFile)
+                storePassword = localProperty("RELEASE_STORE_PASSWORD")
+                keyAlias = localProperty("RELEASE_KEY_ALIAS")
+                keyPassword = localProperty("RELEASE_KEY_PASSWORD")
+                enableV1Signing = true
+                enableV2Signing = true
+                enableV3Signing = true
+                enableV4Signing = true
+            }
         }
     }
 
@@ -41,7 +57,9 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.findByName("release")
+            signingConfigs.findByName("release")?.let {
+                signingConfig = it
+            }
         }
         debug {
             applicationIdSuffix = ".debug"

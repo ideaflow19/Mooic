@@ -18,7 +18,7 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
 var API_BASE_URL = "https://ncm-api.prod.gbclstudio.cn"
-var UNBLOCK_BASE_URL = "https://unm-server.focalors.ltd"
+var UNBLOCK_BASE_URL = "https://unlock.depresskid.top"
 
 val apiClient = HttpClient(OkHttp) {
     install(ContentNegotiation) {

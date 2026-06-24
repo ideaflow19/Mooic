@@ -8,7 +8,10 @@ import androidx.annotation.OptIn
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.media3.common.C
+import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
+import androidx.media3.common.Player
 import androidx.media3.common.Player.REPEAT_MODE_ALL
 import androidx.media3.common.TrackSelectionParameters
 import androidx.media3.common.util.UnstableApi
@@ -51,14 +54,18 @@ import com.rcmiku.ncmapi.api.player.SongLevel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.runBlocking
+import com.rcmiku.ncmapi.utils.CookieProvider
 
 @UnstableApi
 class PlaybackService : MediaSessionService() {
@@ -67,6 +74,8 @@ class PlaybackService : MediaSessionService() {
     private var favoriteSongIds: List<Long> by mutableStateOf(emptyList())
     private val use40DpIcon by preference(this, use40DpIconKey, false)
     private val audioQuality by enumPreference(this, audioQualityKey, SongLevel.STANDARD)
+    private var scrobbleJob: Job? = null
+    private var scrobbleState: ScrobbleState? = null
 
     private val favoriteButton: CommandButton
         get() = CommandButton.Builder(ICON_UNDEFINED)
@@ -182,9 +191,11 @@ class PlaybackService : MediaSessionService() {
             .setCustomLayout(ImmutableList.of(favoriteButton, shuffleButton)).build()
         observeIconPreference()
         observeFavoriteSongIds()
+        observeScrobble(player)
     }
 
     override fun onDestroy() {
+        scrobbleJob?.cancel()
         scope.cancel()
         mediaSession?.run {
             player.release()
@@ -225,6 +236,162 @@ class PlaybackService : MediaSessionService() {
                     FavoriteSongIdsUtil.removeSongId(applicationContext, songId)
                 }
             }
+        }
+    }
+
+    private data class ScrobbleState(
+        val mediaId: String,
+        val mediaItemIndex: Int,
+        var playedSeconds: Int = 0,
+        var reported: Boolean = false
+    )
+
+    private fun observeScrobble(player: Player) {
+        player.addListener(object : Player.Listener {
+            override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+                resetScrobble(player)
+                if (player.isPlaying) startScrobbleTicker(player)
+            }
+
+            override fun onIsPlayingChanged(isPlaying: Boolean) {
+                if (isPlaying) {
+                    startScrobbleTicker(player)
+                } else {
+                    stopScrobbleTicker()
+                }
+            }
+
+            override fun onPlaybackStateChanged(playbackState: Int) {
+                if (playbackState == Player.STATE_ENDED) {
+                    stopScrobbleTicker()
+                }
+            }
+        })
+    }
+
+    private fun resetScrobble(player: Player) {
+        scrobbleState = player.currentMediaItem?.let {
+            ScrobbleState(
+                mediaId = it.mediaId,
+                mediaItemIndex = player.currentMediaItemIndex
+            )
+        }
+    }
+
+    private fun startScrobbleTicker(player: Player) {
+        val mediaItem = player.currentMediaItem ?: return
+        if (!CookieProvider.isLoggedIn()) return
+        if (mediaItem.mediaId.toLongOrNull() == null) return
+
+        val currentState = scrobbleState
+        if (currentState?.mediaId == mediaItem.mediaId &&
+            currentState.mediaItemIndex == player.currentMediaItemIndex &&
+            currentState.reported
+        ) {
+            return
+        }
+
+        if (scrobbleJob?.isActive == true) return
+
+        scrobbleJob = scope.launch {
+            while (isActive) {
+                delay(1000)
+                tickScrobble(player)
+            }
+        }
+    }
+
+    private fun stopScrobbleTicker() {
+        scrobbleJob?.cancel()
+        scrobbleJob = null
+    }
+
+    private fun tickScrobble(player: Player) {
+        if (!CookieProvider.isLoggedIn()) {
+            stopScrobbleTicker()
+            return
+        }
+
+        val mediaItem = player.currentMediaItem ?: run {
+            stopScrobbleTicker()
+            return
+        }
+        val songId = mediaItem.mediaId.toLongOrNull() ?: run {
+            stopScrobbleTicker()
+            return
+        }
+        val currentState = scrobbleState
+            ?.takeIf {
+                it.mediaId == mediaItem.mediaId &&
+                    it.mediaItemIndex == player.currentMediaItemIndex
+            }
+            ?: ScrobbleState(
+                mediaId = mediaItem.mediaId,
+                mediaItemIndex = player.currentMediaItemIndex
+            ).also { scrobbleState = it }
+
+        if (currentState.reported) {
+            stopScrobbleTicker()
+            return
+        }
+
+        currentState.playedSeconds += 1
+        val totalSeconds = resolveTotalSeconds(player, mediaItem)
+        val thresholdSeconds = totalSeconds?.let {
+            if (it < 60) maxOf(5, it / 2) else 30
+        } ?: 30
+
+        if (currentState.playedSeconds >= thresholdSeconds) {
+            currentState.reported = true
+            submitScrobble(mediaItem, songId, currentState.playedSeconds, totalSeconds)
+            stopScrobbleTicker()
+        }
+    }
+
+    private fun resolveTotalSeconds(player: Player, mediaItem: MediaItem): Int? {
+        val playerDuration = player.duration
+            .takeIf { it != C.TIME_UNSET && it > 0 }
+        val metadataDuration = mediaItem.mediaMetadata.extras
+            ?.getLong(MediaSessionConstants.EXTRA_DURATION_MS)
+            ?.takeIf { it > 0 }
+
+        return (playerDuration ?: metadataDuration)
+            ?.div(1000L)
+            ?.toInt()
+    }
+
+    private fun submitScrobble(
+        mediaItem: MediaItem,
+        songId: Long,
+        playedSeconds: Int,
+        totalSeconds: Int?
+    ) {
+        if (!CookieProvider.isLoggedIn()) return
+
+        val metadata = mediaItem.mediaMetadata
+        val extras = metadata.extras
+        val sourceId = extras
+            ?.getLong(MediaSessionConstants.EXTRA_SOURCE_ID)
+            ?.takeIf { it > 0 }
+        val sourceName = extras
+            ?.getString(MediaSessionConstants.EXTRA_SOURCE_NAME)
+            ?.takeIf { it.isNotBlank() }
+        val currentAudioQuality = audioQuality
+        val reportedSeconds = totalSeconds?.let {
+            minOf(playedSeconds, it)
+        } ?: playedSeconds
+
+        scope.launch(Dispatchers.IO) {
+            AccountApi.scrobble(
+                songId = songId,
+                time = reportedSeconds,
+                total = totalSeconds,
+                sourceId = sourceId,
+                sourceName = sourceName,
+                songName = metadata.title?.toString(),
+                artistName = metadata.artist?.toString(),
+                songLevel = currentAudioQuality
+            )
         }
     }
 

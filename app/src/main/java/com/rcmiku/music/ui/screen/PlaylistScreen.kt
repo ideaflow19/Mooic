@@ -193,7 +193,10 @@ fun PlaylistScreen(
                                 }
                                 Button(
                                     onClick = {
-                                        mediaController?.setPlaylist(it.playlist.tracks)
+                                        mediaController?.setPlaylist(
+                                            it.playlist.tracks,
+                                            sourceId = it.playlist.id
+                                        )
                                         mediaController?.playMediaAt()
                                     },
                                     contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
@@ -222,7 +225,10 @@ fun PlaylistScreen(
                             isActive = currentMediaId == song.id,
                             songIndex = index + 1,
                             modifier = Modifier.clickable {
-                                mediaController?.setPlaylist(it.playlist.tracks)
+                                mediaController?.setPlaylist(
+                                    it.playlist.tracks,
+                                    sourceId = it.playlist.id
+                                )
                                 mediaController?.playMediaAtId(song.id)
                             },
                             trailingContent = {
