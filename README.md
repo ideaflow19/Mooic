@@ -5,11 +5,16 @@
 
 <h1 align="center">Mooic</h1>
 
-一个基于 Material 3 设计的 Android 网易云音乐客户端
+<p align="center">
+  一个基于 Material 3 设计的 Android 网易云音乐客户端
+</p>
 
-[![Latest release](https://img.shields.io/github/v/release/rcmiku/JetMelo?include_prereleases)](https://github.com/rcmiku/JetMelo/releases)
-[![GitHub License](https://img.shields.io/github/license/rcmiku/JetMelo)](https://www.gnu.org/licenses/gpl-3.0)
-[![Downloads](https://img.shields.io/github/downloads/rcmiku/JetMelo/total)](https://github.com/rcmiku/JetMelo/releases)
+<p align="center">
+  <a href="./LICENSE">
+      <img src="https://img.shields.io/github/v/release/kid-depress/Mooic?include_prereleases" alt="License" /></a>
+  <img src="https://img.shields.io/badge/License-MIT-red.svg" alt="Platform" />
+  <img src="https://img.shields.io/github/downloads/kid-depress/Mooic/total" />
+</p>
 
 ## 说明
 
