@@ -1,5 +1,9 @@
 # Mooic
-<img src="app\src\main\res\mipmap-xxxhdpi\ic_launcher_round.webp" height="72">
+<p align="center">
+  <img src="https://picgo.2006111.xyz/pigo/picgo/ic_launcher_round.webp" width="100" height="100" alt="素履 Logo" />
+</p>
+
+<h1 align="center">Mooic</h1>
 
 一个基于 Material 3 设计的 Android 网易云音乐客户端
 
@@ -7,10 +11,17 @@
 [![GitHub License](https://img.shields.io/github/license/rcmiku/JetMelo)](https://www.gnu.org/licenses/gpl-3.0)
 [![Downloads](https://img.shields.io/github/downloads/rcmiku/JetMelo/total)](https://github.com/rcmiku/JetMelo/releases)
 
+## 说明
+
+- 本项目为本人个人项目，仅用于个人学习研究，请勿用于商业用途。
+- 本项目大部份界面和功能直接参考了 [JetMelo](https://github.com/rcmiku/JetMelo), api接口来自网络搜集
+- 本项目代码都是英文字母的随机组合,不代表个人观点
+
 ## 功能特性
 
 - 播放网易云音乐歌曲
-- 支持后台播放
+- 支持使用自建api服务
+- 后台播放占用极低
 - 搜索网易云音乐中的歌曲、专辑和歌单
 - 支持登录
 - 支持同步歌词
