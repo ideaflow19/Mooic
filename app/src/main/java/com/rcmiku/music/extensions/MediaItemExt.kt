@@ -16,9 +16,21 @@ import com.rcmiku.ncmapi.model.Song
 import com.rcmiku.ncmapi.utils.json
 
 private fun Song.encodeUri(): String {
-    val base = id.toString()
-    val pl = privilege?.pl ?: 0
-    return "$base?fee=$fee&pl=$pl"
+    return buildString {
+        append(id)
+        append("?fee=")
+        append(fee)
+        privilege?.let {
+            append("&pl=")
+            append(it.pl)
+            append("&dl=")
+            append(it.dl)
+            append("&fl=")
+            append(it.fl)
+            append("&st=")
+            append(it.st)
+        }
+    }
 }
 
 fun Song.toMediaItem(sourceId: Long = 0L, sourceName: String = "list") =

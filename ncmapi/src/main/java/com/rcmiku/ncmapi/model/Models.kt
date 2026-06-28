@@ -2,6 +2,7 @@ package com.rcmiku.ncmapi.model
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.json.JsonElement
 
 // ========== Core models ==========
 
@@ -269,7 +270,11 @@ data class SongUrl(
     val url: String? = null,
     val br: Int = 0,
     val type: String? = null,
-    val level: String? = null
+    val level: String? = null,
+    val size: Long = 0,
+    val time: Long = 0,
+    val fee: Int = 0,
+    val freeTrialInfo: JsonElement? = null
 )
 
 @Serializable

@@ -162,7 +162,7 @@ class PlaybackService : MediaSessionService() {
                     .setCache(AudioCache.get(this@PlaybackService))
                     .setUpstreamDataSourceFactory(resolvingDataSourceFactory)
                     .setCacheKeyFactory { dataSpec ->
-                        "${dataSpec.key ?: dataSpec.uri}#${audioQuality.value}"
+                        "${dataSpec.key ?: dataSpec.uri}#${audioQuality.value}#unblock-v2"
                     }
                     .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
                 setMediaSourceFactory(DefaultMediaSourceFactory(cacheDataSourceFactory))
