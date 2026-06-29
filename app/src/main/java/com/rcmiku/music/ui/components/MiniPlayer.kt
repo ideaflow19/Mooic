@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -33,7 +35,6 @@ import com.rcmiku.music.constants.MiniPlayerHeight
 import com.rcmiku.music.constants.ThumbnailCornerRadius
 import com.rcmiku.music.ui.icons.Pause
 import com.rcmiku.music.ui.icons.PlayArrow
-import com.rcmiku.music.ui.icons.SkipNext
 
 @Composable
 fun MiniPlayer(
@@ -43,6 +44,7 @@ fun MiniPlayer(
     modifier: Modifier = Modifier,
     imageModifier: Modifier = Modifier,
     onClick: () -> Unit = {},
+    onQueueClick: () -> Unit = {},
 ) {
     val mediaController = LocalPlayerController.current.controller
     val playerState = LocalPlayerState.current
@@ -94,11 +96,9 @@ fun MiniPlayer(
                 }
                 IconButton(
                     enabled = true,
-                    onClick = {
-                        mediaController?.seekToNext()
-                    }
+                    onClick = onQueueClick
                 ) {
-                    Icon(imageVector = SkipNext, contentDescription = null)
+                    Icon(imageVector = Icons.Filled.Menu, contentDescription = null)
                 }
             }
         }

@@ -199,6 +199,10 @@ fun PlayerTransform(
                             show = FULL_PLAYER
                             onClick()
                         },
+                        onQueueClick = {
+                            show = PLAY_QUEUE
+                            onClick()
+                        },
                         imageModifier = Modifier.sharedElement(
                             state = rememberSharedContentState(
                                 key = mediaMetadata.artist.toString()
