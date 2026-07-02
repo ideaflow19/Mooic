@@ -3,7 +3,9 @@ package com.rcmiku.music.viewModel
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.rcmiku.music.constants.userIdKye
 import com.rcmiku.music.utils.FavoriteSongIdsUtil
+import com.rcmiku.music.utils.dataStore
 import com.rcmiku.ncmapi.api.account.AccountApi
 import com.rcmiku.ncmapi.api.recommend.RecommendApi
 import com.rcmiku.ncmapi.model.DailySongsResponse
@@ -13,6 +15,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -37,7 +40,12 @@ class HomeScreenViewModel @Inject constructor(@ApplicationContext private val co
 
     private fun fetchFavoriteSongIds() {
         viewModelScope.launch {
-            AccountApi.favoriteSongIds().getOrNull()?.ids?.let {
+            var uid = context.dataStore.data.first()[userIdKye] ?: 0L
+            if (uid == 0L) {
+                uid = AccountApi.account().getOrNull()?.profile?.userId ?: 0L
+            }
+            if (uid == 0L) return@launch
+            AccountApi.favoriteSongIds(uid).getOrNull()?.ids?.let {
                 FavoriteSongIdsUtil.updateSongIds(context, it)
             }
         }

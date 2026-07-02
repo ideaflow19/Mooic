@@ -21,19 +21,32 @@ object AccountApi {
     }
 
     suspend fun favoriteSong(uid: Long): Result<FavoriteSongResponse> =
-        apiGet("/likelist", mapOf("uid" to uid))
+        apiGet(
+            "/likelist",
+            mapOf("uid" to uid, "timestamp" to System.currentTimeMillis())
+        )
 
-    suspend fun favoriteSongIds(): Result<FavoriteSongResponse> =
-        apiGet("/likelist")
+    suspend fun favoriteSongIds(uid: Long): Result<FavoriteSongResponse> =
+        favoriteSong(uid)
 
     suspend fun favoriteSongLikeChange(): Result<ApiCodeResponse> =
         Result.success(ApiCodeResponse(code = 200))
 
     suspend fun songLike(like: Boolean, songId: Long): Result<ApiCodeResponse> =
-        apiGet("/like", mapOf("id" to songId, "like" to like))
+        apiGet<ApiCodeResponse>(
+            "/like",
+            mapOf(
+                "id" to songId,
+                "like" to like,
+                "timestamp" to System.currentTimeMillis()
+            )
+        ).mapCatching { response ->
+            if (response.code == 200) response
+            else throw Exception("Like failed: code=${response.code} ${response.message.orEmpty()}")
+        }
 
     suspend fun songDislike(songId: Long): Result<ApiCodeResponse> =
-        apiGet("/like", mapOf("id" to songId, "like" to false))
+        songLike(like = false, songId = songId)
 
     suspend fun userPlaylist(
         userId: Long,
